@@ -19,9 +19,12 @@ Projet à rendre sur un espace Celene
 ----------
 Idées en vrac
 -------------
-Multi-start local search <br />
+#### Multi-start local search
 Initial solution: random permutation of customers <br />
 Neighborhood: re-locate (first or best improvement (we have to pick one))
+
+#### Là où le prof il a pépom
+http://parallelcomp.uw.hu/ch03lev1sec1.html
 
 ----------
 Infos pas forcément utiles
