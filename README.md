@@ -19,6 +19,14 @@ Projet à rendre sur un espace Celene
 ----------
 Infos pas forcément utiles
 -------------
+#### Idées en vrac
+Multi-start local search <br />
+Initial solution: random permutation of customers <br />
+Neighborhood: re-locate (first or best improvement (we have to pick one))
+
+----------
+Infos pas forcément utiles
+-------------
 #### How to: fix .gitignore
 
 **Prérequis :** que tous les repo locaux soient à jour
