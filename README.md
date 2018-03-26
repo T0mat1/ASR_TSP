@@ -17,9 +17,8 @@ Afficher un diagramme de classe en présentant uniquement les classes importante
 Projet à rendre sur un espace Celene
 
 ----------
-Infos pas forcément utiles
+Idées en vrac
 -------------
-#### Idées en vrac
 Multi-start local search <br />
 Initial solution: random permutation of customers <br />
 Neighborhood: re-locate (first or best improvement (we have to pick one))
