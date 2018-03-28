@@ -3,7 +3,7 @@ package polytech.tours.di.parallel.tsp;
 import java.util.ArrayList;
 
 /**
- * Computes the cost of a TSP solution
+ * Computes the cost of a TSP solution (warning : serial use only, no parallel use implemented yet)
  * @author Jorge E. Mendoza (dev@jorge-mendoza.com)
  * @version %I%, %G%
  *
