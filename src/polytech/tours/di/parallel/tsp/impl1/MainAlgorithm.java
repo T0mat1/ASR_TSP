@@ -33,8 +33,6 @@ public class MainAlgorithm implements Algorithm {
 		
 		Solution currentSolution = new Solution();
 		Solution best = null;
-
-		Coordinator coordinator = new Coordinator();
 		
 
 		for(int i=0; i<inst.getN(); i++){
@@ -46,16 +44,14 @@ public class MainAlgorithm implements Algorithm {
 			//set the objective function of the solution
 			currentSolution.setOF(TSPCostCalculator.calcOF(inst.getDistanceMatrix(), currentSolution));
 			
-			//TODO run local search here
-			
+			//run local search			
 			ExecutorService executor = Executors.newFixedThreadPool((int) max_thread);
 			ArrayList<Future <Solution>> results;
 			ArrayList<Callable <Solution>> tasks = new ArrayList<>();
 			for(int i=0; i<=max_tasks&&i<=currentSolution.size(); i++) {
-				tasks.add(new LocalSearch(i, currentSolution, inst, coordinator));
+				tasks.add(new LocalSearch(i, currentSolution, inst));
 			}
-			
-			
+						
 			try {
 				results = (ArrayList<Future<Solution>>) executor.invokeAll(tasks);
 				//coordinator runs executor.shutdown if time exceeds required time

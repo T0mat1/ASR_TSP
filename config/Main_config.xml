@@ -4,7 +4,7 @@
    	is the datafile holding the instance to solve
    </comment>
    <entry key="algorithm">polytech.tours.di.parallel.tsp.impl1.MainAlgorithm</entry>
-   <entry key="maxcpu">10</entry>
+   <entry key="maxcpu">100</entry>
    <entry key="instance">./data/uy734.tsp.txt</entry>
    <entry key="seed">123456</entry>
    <entry key="maxthreads">4</entry>
