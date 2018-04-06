@@ -3,7 +3,11 @@ package polytech.tours.di.parallel.tsp.impl1;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import polytech.tours.di.parallel.tsp.Algorithm;
 import polytech.tours.di.parallel.tsp.Instance;
@@ -22,7 +26,7 @@ public class MainAlgorithm implements Algorithm {
 		
 		Instance inst = instReader.getInstance();
 		long max_cpu = Long.valueOf(config.getProperty("maxcpu"));
-		long max_thread = Long.valueOf(config.getProperty("maxtheads"));
+		long max_thread = Long.valueOf(config.getProperty("maxthreads"));
 		long max_tasks = Long.valueOf(config.getProperty("maxtasks"));
 		
 		Random rand=new Random(Long.valueOf(config.getProperty("seed")));
@@ -32,36 +36,54 @@ public class MainAlgorithm implements Algorithm {
 
 		Coordinator coordinator = new Coordinator();
 		
-		long startTime=System.currentTimeMillis();
+
 		for(int i=0; i<inst.getN(); i++){
 			currentSolution.add(i);
 		}
 		
+		long startTime=System.currentTimeMillis();		
 		while((System.currentTimeMillis()-startTime)/1_000<=max_cpu){	
 			//set the objective function of the solution
 			currentSolution.setOF(TSPCostCalculator.calcOF(inst.getDistanceMatrix(), currentSolution));
 			
 			//TODO run local search here
 			
-
-			// TODO wip executor / callable
-			// y'aura une ThreadPool de la classe Executor (newFixed) avec arg max_thread en param
-			/*
-			ArrayList<LocalSearch> tasks=new ArrayList<>();
-			ArrayList<Thread> threads=new ArrayList<>();
-			Executors executor;
-			
-			for(int t=1;t<=inst.getN();t++){
-				 tasks.add(new LocalSearch(currentSolution.get(t), currentSolution, inst));
-				 threads.add(new Thread(tasks.get(tasks.size()-1)));
+			ExecutorService executor = Executors.newFixedThreadPool((int) max_thread);
+			ArrayList<Future <Solution>> results;
+			ArrayList<Callable <Solution>> tasks = new ArrayList<>();
+			for(int i=0; i<=max_tasks&&i<=currentSolution.size(); i++) {
+				tasks.add(new LocalSearch(i, currentSolution, inst, coordinator));
 			}
 			
-			//Launch execution			
-			for(int i=0; i<inst.getN(); i++) {
-				LocalSearch ls = new LocalSearch(currentSolution.get(i), currentSolution, inst);
-				ls.call();
+			
+			try {
+				results = (ArrayList<Future<Solution>>) executor.invokeAll(tasks);
+				//coordinator runs executor.shutdown if time exceeds required time
+				while((!executor.isTerminated())&&(System.currentTimeMillis()-startTime)/1_000<=max_cpu) {
+					//do nothing, just wait like a good thread
+				}
+				executor.shutdown();
+			} catch(InterruptedException e) {
+				return currentSolution;
 			}
-			*/
+			
+			try {
+				double currentBestOF = currentSolution.getOF();
+				for(Future<Solution> someBest : results) {
+					//choisir la meilleure
+					if (someBest.get().getOF() < currentBestOF) {
+						best = someBest.get();
+						best.setOF(TSPCostCalculator.calcOF(inst.getDistanceMatrix(), best));
+						currentBestOF = best.getOF();
+					}
+				}
+			} catch(InterruptedException | ExecutionException e) {
+				if(best==null) {
+					return currentSolution;
+				} else {
+					return best;
+				}
+			}
 	
 			if(best==null)
 				best=currentSolution.clone();

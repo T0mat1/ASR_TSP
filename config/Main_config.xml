@@ -5,8 +5,8 @@
    </comment>
    <entry key="algorithm">polytech.tours.di.parallel.tsp.impl1.MainAlgorithm</entry>
    <entry key="maxcpu">10</entry>
-   <entry key="instance">./data/wi29.tsp.txt</entry>
+   <entry key="instance">./data/uy734.tsp.txt</entry>
    <entry key="seed">123456</entry>
-   <entry key="maxthreads">10</entry>
+   <entry key="maxthreads">4</entry>
    <entry key="maxtasks">10</entry>
 </properties>

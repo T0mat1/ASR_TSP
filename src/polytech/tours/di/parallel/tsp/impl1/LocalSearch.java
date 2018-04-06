@@ -17,11 +17,13 @@ public class LocalSearch implements Callable<Solution> {
 	private Solution currentSolution;
 	private int currentCity;
 	private Instance instance;
+	private Coordinator coordinator;
 	
-	public LocalSearch(int city, Solution newSolution, Instance newInstance) {
+	public LocalSearch(int city, Solution newSolution, Instance newInstance, Coordinator newCoordinator) {
 		currentSolution = newSolution;
 		currentCity = city;
 		instance = newInstance;
+		coordinator = newCoordinator;
 	}
 	
 	@Override
@@ -33,6 +35,8 @@ public class LocalSearch implements Callable<Solution> {
 				currentSolution.setOF(TSPCostCalculator.calcOF(instance, currentSolution));
 			if (currentSolution.getOF()<bestSolution.getOF())
 				bestSolution = currentSolution.clone();
+			if (!coordinator.keepRunning())
+				break;
 		}
 		return bestSolution;
 	}
