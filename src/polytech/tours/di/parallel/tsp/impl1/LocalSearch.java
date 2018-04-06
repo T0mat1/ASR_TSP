@@ -4,7 +4,6 @@ import java.util.concurrent.Callable;
 
 import polytech.tours.di.parallel.tsp.Instance;
 import polytech.tours.di.parallel.tsp.Solution;
-import polytech.tours.di.parallel.tsp.TSPCostCalculator;
 
 /**
  * In these tasks, we relocate a city in every possible ways and keep only the
@@ -19,11 +18,13 @@ public class LocalSearch implements Callable<Solution> {
 	private Solution currentSolution;
 	private int currentCity;
 	private Instance instance;
+	private Coordinator coordinator;
 
-	public LocalSearch(int city, Solution newSolution, Instance newInstance) {
+	public LocalSearch(int city, Solution newSolution, Instance newInstance, Coordinator newCoordinator) {
 		currentSolution = newSolution;
 		currentCity = city;
 		instance = newInstance;
+		coordinator = newCoordinator;
 	}
 
 	@Override
@@ -38,6 +39,8 @@ public class LocalSearch implements Callable<Solution> {
 			tmpSolution.setOF(calcOF(instance, currentSolution));
 			if (tmpSolution.getOF() < bestSolution.getOF())
 				bestSolution = tmpSolution.clone();
+			if (!coordinator.keepRunning())
+				break;
 		}
 		return bestSolution;
 	}

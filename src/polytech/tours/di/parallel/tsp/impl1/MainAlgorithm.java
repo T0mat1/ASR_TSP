@@ -1,6 +1,7 @@
 package polytech.tours.di.parallel.tsp.impl1;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -30,6 +31,7 @@ public class MainAlgorithm implements Algorithm {
 		long max_tasks = Long.valueOf(config.getProperty("maxtasks"));
 		
 		Random rand=new Random(Long.valueOf(config.getProperty("seed")));
+		Coordinator coordinator = new Coordinator();
 		
 		Solution currentSolution = new Solution();
 		Solution best = null;
@@ -40,16 +42,19 @@ public class MainAlgorithm implements Algorithm {
 		}
 		
 		long startTime=System.currentTimeMillis();		
-		while((System.currentTimeMillis()-startTime)/1_000<=max_cpu){	
+		while((System.currentTimeMillis()-startTime)/1_000<=max_cpu){
+			Collections.shuffle(currentSolution,rand);
+			
 			//set the objective function of the solution
 			currentSolution.setOF(TSPCostCalculator.calcOF(inst.getDistanceMatrix(), currentSolution));
+			System.out.println(currentSolution);
 			
 			//run local search			
 			ExecutorService executor = Executors.newFixedThreadPool((int) max_thread);
 			ArrayList<Future <Solution>> results;
 			ArrayList<Callable <Solution>> tasks = new ArrayList<>();
 			for(int i=0; i<=max_tasks&&i<=currentSolution.size(); i++) {
-				tasks.add(new LocalSearch(i, currentSolution, inst));
+				tasks.add(new LocalSearch(i, currentSolution, inst, coordinator));
 			}
 						
 			try {
@@ -58,6 +63,7 @@ public class MainAlgorithm implements Algorithm {
 				while((!executor.isTerminated())&&(System.currentTimeMillis()-startTime)/1_000<=max_cpu) {
 					//do nothing, just wait like a good thread
 				}
+				coordinator.stop();
 				executor.shutdown();
 			} catch(InterruptedException e) {
 				return currentSolution;
@@ -68,6 +74,7 @@ public class MainAlgorithm implements Algorithm {
 				for(Future<Solution> someBest : results) {
 					//choisir la meilleure
 					if (someBest.get().getOF() < currentBestOF) {
+						System.out.println(someBest.get());
 						best = someBest.get();
 						best.setOF(TSPCostCalculator.calcOF(inst.getDistanceMatrix(), best));
 						currentBestOF = best.getOF();
