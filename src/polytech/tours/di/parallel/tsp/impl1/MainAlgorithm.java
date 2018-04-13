@@ -42,7 +42,7 @@ public class MainAlgorithm implements Algorithm {
 		}
 		
 		long startTime=System.currentTimeMillis();		
-		while((System.currentTimeMillis()-startTime)/1_000<=max_cpu){
+		while((System.currentTimeMillis()-startTime)/1_000<max_cpu){
 			Collections.shuffle(currentSolution,rand);
 			
 			//set the objective function of the solution
@@ -60,7 +60,7 @@ public class MainAlgorithm implements Algorithm {
 			try {
 				results = (ArrayList<Future<Solution>>) executor.invokeAll(tasks);
 				//coordinator runs executor.shutdown if time exceeds required time
-				while((!executor.isTerminated())&&(System.currentTimeMillis()-startTime)/1_000<=max_cpu) {
+				while((!executor.isTerminated())&&(System.currentTimeMillis()-startTime)/1_000<=max_cpu) { //executor.awaitTermination(long timeout, TimeUnit unit) ?
 					//do nothing, just wait like a good thread
 				}
 				coordinator.stop();
@@ -72,11 +72,12 @@ public class MainAlgorithm implements Algorithm {
 			try {
 				double currentBestOF = currentSolution.getOF();
 				for(Future<Solution> someBest : results) {
+					System.out.println(someBest.get());
 					//choisir la meilleure
 					if (someBest.get().getOF() < currentBestOF) {
 						System.out.println(someBest.get());
 						best = someBest.get();
-						best.setOF(TSPCostCalculator.calcOF(inst.getDistanceMatrix(), best));
+						best.setOF(TSPCostCalculator.calcOF(inst, best));
 						currentBestOF = best.getOF();
 					}
 				}
@@ -94,6 +95,7 @@ public class MainAlgorithm implements Algorithm {
 				best=currentSolution.clone();
 		}
 		//return the solution
+		System.out.println((System.currentTimeMillis()-startTime)/1_000);
 		return best;
 	}
 

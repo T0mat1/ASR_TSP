@@ -29,9 +29,4 @@ public class Coordinator {
 		this.run = false;
 	}
 
-	/*
-	 * NOTE: since there is going to be only one thread writing to variable run
-	 * a volatile declaration is enough to ensure synchronization.
-	 */
-
 }
