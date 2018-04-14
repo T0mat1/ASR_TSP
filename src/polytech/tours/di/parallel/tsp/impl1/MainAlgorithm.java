@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import polytech.tours.di.parallel.tsp.Algorithm;
 import polytech.tours.di.parallel.tsp.Instance;
@@ -58,12 +59,7 @@ public class MainAlgorithm implements Algorithm {
 			}
 						
 			try {
-				results = (ArrayList<Future<Solution>>) executor.invokeAll(tasks);
-				//coordinator runs executor.shutdown if time exceeds required time
-				while((!executor.isTerminated())&&(System.currentTimeMillis()-startTime)/1_000<=max_cpu) { //executor.awaitTermination(long timeout, TimeUnit unit) ?
-					//do nothing, just wait like a good thread
-				}
-				coordinator.stop();
+				results = (ArrayList<Future<Solution>>) executor.invokeAll(tasks, (long) ((max_cpu)-((System.currentTimeMillis()-startTime)/1_000)), TimeUnit.SECONDS);
 				executor.shutdown();
 			} catch(InterruptedException e) {
 				return currentSolution;
