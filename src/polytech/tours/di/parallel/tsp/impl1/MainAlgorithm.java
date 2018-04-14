@@ -48,7 +48,6 @@ public class MainAlgorithm implements Algorithm {
 			
 			//set the objective function of the solution
 			currentSolution.setOF(TSPCostCalculator.calcOF(inst.getDistanceMatrix(), currentSolution));
-			System.out.println(currentSolution);
 			
 			//run local search			
 			ExecutorService executor = Executors.newFixedThreadPool((int) max_thread);
@@ -57,7 +56,8 @@ public class MainAlgorithm implements Algorithm {
 			for(int i=0; i<=max_tasks&&i<=currentSolution.size(); i++) {
 				tasks.add(new LocalSearch(i, currentSolution, inst, coordinator));
 			}
-						
+				
+			//execute tasks
 			try {
 				results = (ArrayList<Future<Solution>>) executor.invokeAll(tasks, (long) ((max_cpu)-((System.currentTimeMillis()-startTime)/1_000)), TimeUnit.SECONDS);
 				executor.shutdown();
@@ -68,10 +68,8 @@ public class MainAlgorithm implements Algorithm {
 			try {
 				double currentBestOF = currentSolution.getOF();
 				for(Future<Solution> someBest : results) {
-					System.out.println(someBest.get());
 					//choisir la meilleure
 					if (someBest.get().getOF() < currentBestOF) {
-						System.out.println(someBest.get());
 						best = someBest.get();
 						best.setOF(TSPCostCalculator.calcOF(inst, best));
 						currentBestOF = best.getOF();
@@ -91,7 +89,6 @@ public class MainAlgorithm implements Algorithm {
 				best=currentSolution.clone();
 		}
 		//return the solution
-		System.out.println((System.currentTimeMillis()-startTime)/1_000);
 		return best;
 	}
 
