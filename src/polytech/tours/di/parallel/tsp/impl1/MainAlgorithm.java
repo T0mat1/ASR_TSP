@@ -31,7 +31,8 @@ public class MainAlgorithm implements Algorithm {
 		long max_thread = Long.valueOf(config.getProperty("maxthreads"));
 		long max_tasks = Long.valueOf(config.getProperty("maxtasks"));
 		
-		Random rand=new Random(Long.valueOf(config.getProperty("seed")));
+		//Random rand=new Random(Long.valueOf(config.getProperty("seed")));
+		Random rand = new Random();
 		Coordinator coordinator = new Coordinator();
 		
 		Solution currentSolution = new Solution();
@@ -87,6 +88,8 @@ public class MainAlgorithm implements Algorithm {
 				best=currentSolution.clone();
 			else if(currentSolution.getOF()<best.getOF())
 				best=currentSolution.clone();
+			
+			rand.nextLong();
 		}
 		//return the solution
 		return best;

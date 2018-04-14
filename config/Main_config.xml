@@ -4,8 +4,8 @@
 is the datafile holding the instance to solve</comment>
    <entry key="algorithm">polytech.tours.di.parallel.tsp.impl1.MainAlgorithm</entry>
    <entry key="maxcpu">10</entry>
-   <entry key="instance">./data/wi29.tsp.txt</entry>
+   <entry key="instance">./data/nu3496.tsp.txt</entry>
    <entry key="seed">123456</entry>
-   <entry key="maxthreads">4</entry>
-   <entry key="maxtasks">20</entry>
+   <entry key="maxthreads">6</entry>
+   <entry key="maxtasks">24</entry>
 </properties>

@@ -38,7 +38,7 @@ public class Launcher {
 		Solution s=algorithm.run(config);
 		
 		//report solution
-		System.out.println(s);
+		System.out.println(config.getProperty("instance").replace("./data/", "").replace(".tsp.txt", "") + " ; " + config.getProperty("maxcpu") + " ; " + s.getOF());
 	}
 
 }
